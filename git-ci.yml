@@ -14,27 +14,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Passo 1: Construir e empurrar a imagem do aplicativo
-    - name: Checkout code
-      uses: actions/checkout@v2
+      # Passo 1: Checkout do código-fonte
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Build and push app Docker image
-      uses: docker/build-push-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }} # variável de ambiente para seu nome de usuário do Docker Hub
-        password: ${{ secrets.DOCKER_PASSWORD }} # variável de ambiente para sua senha do Docker Hub
-        repository: w3ll1n9t0n/app:v8 # substitua pelo nome do seu repositório do Docker Hub
-        tag_with_ref: true
-        push: true
-        path: ./app # caminho para o diretório do seu aplicativo
+      # Passo 2: Login no Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Passo 2: Construir e empurrar a imagem do MySQL
-    - name: Build and push MySQL Docker image
-      uses: docker/build-push-action@v2
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }} # variável de ambiente para seu nome de usuário do Docker Hub
-        password: ${{ secrets.DOCKER_PASSWORD }} # variável de ambiente para sua senha do Docker Hub
-        repository: w3ll1n9t0n/mysql:v8 # substitua pelo nome do seu repositório do Docker Hub
-        tag_with_ref: true
-        push: true
-        path: ./mysql # caminho para o diretório do seu contêiner MySQL
+      # Passo 3: Build e push da imagem Docker para o aplicativo
+      - name: Build and push app Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./app
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/app:v8
+
+      # Passo 4: Build e push da imagem Docker para o MySQL
+      - name: Build and push MySQL Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./mysql
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/mysql:v8
