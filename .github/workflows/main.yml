@@ -1,45 +1,16 @@
-name: Build and Push Docker Images
-
-# Dispara o workflow quando houver push ou pull request no ramo main
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
 
     steps:
-      # Passo 1: Construir e empurrar a imagem do aplicativo
+      # Passo 1: Checkout do código
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build and push app Docker image
-        uses: docker/build-push-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: w3ll1n9t0n/app
-          tag_with_ref: false # Desativando o uso de tags com referência, assim usaremos apenas a tag "v8"
-          push: true
-          tags: v8 # Definindo a tag para v8
-          path: ./app
+      # Passo 2: Login no Docker Hub
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-      # Passo 2: Construir e empurrar a imagem do MySQL
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Build and push MySQL Docker image
-        uses: docker/build-push-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: w3ll1n9t0n/mysql
-          tag_with_ref: false # Desativando o uso de tags com referência, assim usaremos apenas a tag "v8"
-          push: true
-          tags: v8 # Definindo a tag para v8
-          path: ./mysql
+      # Exibir mensagem de sucesso
+      - name: Exibir mensagem de login com sucesso
+        run: echo "Login no Docker Hub realizado com sucesso!"
