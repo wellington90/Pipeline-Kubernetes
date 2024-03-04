@@ -25,7 +25,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # Passo 3: Build e push da imagem Docker
+      # Passo 3: Build e push da imagem Docker para o aplicativo
       - name: Build and push app Docker image
         uses: docker/build-push-action@v2
         with:
@@ -33,10 +33,10 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/app:v8
 
-                # Passo 3: Build e push da imagem Docker
-      - name: Build and push app Docker image
-      uses: docker/build-push-action@v2
-      with:
-        context: ./mysql
-        push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/mysql:v8
+      # Passo 4: Build e push da imagem Docker para o MySQL
+      - name: Build and push MySQL Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ./mysql
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/mysql:v8
